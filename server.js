@@ -17,7 +17,7 @@ connectDB();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5174",
+    origin: "https://hospital-management-chi-flame.vercel.app",
     credentials: true
   })
 );
