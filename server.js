@@ -15,14 +15,28 @@ const app = express();
 connectDB();
 
 // Middleware
+const allowedOrigins = [
+  "http://localhost:5174",
+  "http://localhost:5173",
+  "https://hospital-management-chi-flame.vercel.app"
+];
+
 app.use(
   cors({
-    origin: "https://hospital-management-chi-flame.vercel.app",
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true
   })
 );
 
 app.use(express.json());
+
+app.set("trust proxy", 1);
 
 app.use(
   session({
@@ -32,8 +46,8 @@ app.use(
     cookie: {
       maxAge: 1000 * 60 * 60 * 24,
       httpOnly: true,
-      secure: true,
-      sameSite: "none"
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax"
     }
   })
 );
